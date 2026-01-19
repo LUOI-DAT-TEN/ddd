@@ -1,1 +1,372 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ngày Quốc Tế Phụ Nữ 8/3</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #ffeef8 0%, #fff5f7 100%);
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+            color: white;
+            text-align: center;
+            padding: 3rem 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+
+        /* Navigation */
+        nav {
+            background: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        nav li {
+            position: relative;
+        }
+
+        nav a {
+            display: block;
+            padding: 1rem 1.5rem;
+            color: #c44569;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover {
+            background: #ffe0ec;
+            color: #ff6b9d;
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .content-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .content-section h2 {
+            color: #c44569;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+            border-left: 5px solid #ff6b9d;
+            padding-left: 1rem;
+        }
+
+        .tooltip-container {
+            display: inline-block;
+            position: relative;
+            color: #ff6b9d;
+            font-weight: bold;
+            cursor: help;
+            border-bottom: 2px dotted #ff6b9d;
+        }
+
+        .tooltip {
+            visibility: hidden;
+            opacity: 0;
+            background: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 10px 15px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 250px;
+            font-size: 0.9rem;
+            font-weight: normal;
+            transition: opacity 0.3s, visibility 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+
+        .tooltip-container:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #fff 0%, #ffe0ec 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid #ffe0ec;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(255, 107, 157, 0.3);
+        }
+
+        .card h3 {
+            color: #c44569;
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, #c44569 0%, #ff6b9d 100%);
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+            margin-top: 3rem;
+        }
+
+        footer p {
+            margin: 0.5rem 0;
+        }
+
+        .footer-links {
+            margin-top: 1rem;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1rem;
+            opacity: 0.9;
+            transition: opacity 0.3s;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+
+            nav ul {
+                flex-direction: column;
+            }
+
+            nav a {
+                border-bottom: 1px solid #ffe0ec;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>🌸 Ngày Quốc Tế Phụ Nữ 8/3 🌸</h1>
+        <p>Tôn vinh vẻ đẹp, sức mạnh và những đóng góp của phụ nữ</p>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="#history">Lịch Sử</a></li>
+            <li><a href="#meaning">Ý Nghĩa</a></li>
+            <li><a href="#celebration">Kỷ Niệm</a></li>
+            <li><a href="#quotes">Danh Ngôn</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <section id="history" class="content-section">
+            <h2>📜 Lịch Sử Ngày 8/3</h2>
+            <p>
+                <span class="tooltip-container">Ngày Quốc tế Phụ nữ
+                    <span class="tooltip">International Women's Day - Được công nhận bởi Liên Hợp Quốc từ năm 1975</span>
+                </span>
+                được kỷ niệm lần đầu tiên vào năm 
+                <span class="tooltip-container">1911
+                    <span class="tooltip">Ngày 19/3/1911 tại Áo, Đức, Thụy Sĩ và Đan Mạch với hơn 1 triệu người tham gia</span>
+                </span>
+                . Ngày này bắt nguồn từ các phong trào 
+                <span class="tooltip-container">lao động phụ nữ
+                    <span class="tooltip">Phụ nữ đấu tranh cho quyền bình đẳng, quyền bầu cử và điều kiện làm việc tốt hơn</span>
+                </span>
+                vào đầu thế kỷ 20.
+            </p>
+            <p style="margin-top: 1rem;">
+                Tại Việt Nam, ngày 8/3 đã trở thành một ngày lễ đặc biệt để tôn vinh 
+                <span class="tooltip-container">phụ nữ Việt Nam
+                    <span class="tooltip">Phụ nữ Việt Nam nổi tiếng với tinh thần mạnh mẽ, truyền thống "Anh hùng, bất khuất, trung hậu, đảm đang"</span>
+                </span>
+                trong gia đình và xã hội.
+            </p>
+        </section>
+
+        <section id="meaning" class="content-section">
+            <h2>💝 Ý Nghĩa Của Ngày 8/3</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="icon">⚖️</div>
+                    <h3>
+                        <span class="tooltip-container">Bình Đẳng Giới
+                            <span class="tooltip">Đấu tranh để phụ nữ có quyền ngang bằng với nam giới trong mọi lĩnh vực</span>
+                        </span>
+                    </h3>
+                    <p>Thúc đẩy quyền bình đẳng giữa nam và nữ trong xã hội</p>
+                </div>
+                <div class="card">
+                    <div class="icon">🏆</div>
+                    <h3>
+                        <span class="tooltip-container">Tôn Vinh Thành Tựu
+                            <span class="tooltip">Ghi nhận những đóng góp to lớn của phụ nữ trong lịch sử và hiện tại</span>
+                        </span>
+                    </h3>
+                    <p>Ghi nhận những đóng góp xuất sắc của phụ nữ</p>
+                </div>
+                <div class="card">
+                    <div class="icon">💪</div>
+                    <h3>
+                        <span class="tooltip-container">Trao Quyền Phụ Nữ
+                            <span class="tooltip">Hỗ trợ phụ nữ phát triển kỹ năng, sự nghiệp và vị thế trong xã hội</span>
+                        </span>
+                    </h3>
+                    <p>Khuyến khích phụ nữ phát triển bản thân và sự nghiệp</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="celebration" class="content-section">
+            <h2>🎉 Cách Kỷ Niệm Ngày 8/3</h2>
+            <ul style="list-style: none; padding: 0;">
+                <li style="padding: 0.8rem; margin: 0.5rem 0; background: #fff5f7; border-radius: 8px;">
+                    🌹 Tặng 
+                    <span class="tooltip-container">hoa và quà
+                        <span class="tooltip">Hoa hồng, tulip, lan là những loại hoa phổ biến tặng vào ngày 8/3</span>
+                    </span>
+                    cho những người phụ nữ quan trọng
+                </li>
+                <li style="padding: 0.8rem; margin: 0.5rem 0; background: #fff5f7; border-radius: 8px;">
+                    ❤️ Bày tỏ 
+                    <span class="tooltip-container">lòng biết ơn
+                        <span class="tooltip">Nói lời cảm ơn chân thành đến mẹ, vợ, chị em, đồng nghiệp nữ</span>
+                    </span>
+                    và sự trân trọng
+                </li>
+                <li style="padding: 0.8rem; margin: 0.5rem 0; background: #fff5f7; border-radius: 8px;">
+                    🎊 Tổ chức các 
+                    <span class="tooltip-container">sự kiện văn hóa
+                        <span class="tooltip">Hội thảo, triển lãm, buổi giao lưu về quyền phụ nữ và bình đẳng giới</span>
+                    </span>
+                    và hoạt động cộng đồng
+                </li>
+                <li style="padding: 0.8rem; margin: 0.5rem 0; background: #fff5f7; border-radius: 8px;">
+                    📱 Chia sẻ 
+                    <span class="tooltip-container">thông điệp ý nghĩa
+                        <span class="tooltip">Sử dụng hashtag #IWD #InternationalWomensDay #NgayQuocTePhunu để lan tỏa</span>
+                    </span>
+                    trên mạng xã hội
+                </li>
+            </ul>
+        </section>
+
+        <section id="quotes" class="content-section">
+            <h2>✨ Danh Ngôn Về Phụ Nữ</h2>
+            <blockquote style="border-left: 4px solid #ff6b9d; padding-left: 1rem; margin: 1rem 0; font-style: italic; color: #555;">
+                "Không có gì cao quý hơn một người phụ nữ mạnh mẽ." - 
+                <span class="tooltip-container">Sophocles
+                    <span class="tooltip">Nhà viết kịch Hy Lạp cổ đại nổi tiếng (496-406 TCN)</span>
+                </span>
+            </blockquote>
+            <blockquote style="border-left: 4px solid #ff6b9d; padding-left: 1rem; margin: 1rem 0; font-style: italic; color: #555;">
+                "Phụ nữ là nền tảng thực sự của xã hội." - 
+                <span class="tooltip-container">Jean-Jacques Rousseau
+                    <span class="tooltip">Triết gia và nhà văn người Pháp thời kỳ Khai sáng (1712-1778)</span>
+                </span>
+            </blockquote>
+            <blockquote style="border-left: 4px solid #ff6b9d; padding-left: 1rem; margin: 1rem 0; font-style: italic; color: #555;">
+                "Giáo dục một người đàn ông, bạn giáo dục một cá nhân. Giáo dục một người phụ nữ, bạn giáo dục cả một thế hệ." - 
+                <span class="tooltip-container">Brigham Young
+                    <span class="tooltip">Lãnh đạo tôn giáo người Mỹ (1801-1877), nhấn mạnh vai trò của phụ nữ trong gia đình</span>
+                </span>
+            </blockquote>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 - Trang Web Ngày Quốc Tế Phụ Nữ 8/3</p>
+        <p>Tôn vinh và tri ân những người phụ nữ tuyệt vời</p>
+        <div class="footer-links">
+            <a href="#history">Lịch Sử</a>
+            <a href="#meaning">Ý Nghĩa</a>
+            <a href="#celebration">Kỷ Niệm</a>
+            <a href="#quotes">Danh Ngôn</a>
+        </div>
+        <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.9;">
+            🌸 Chúc mừng ngày 8/3 - Hãy luôn tự hào là phụ nữ! 🌸
+        </p>
+    </footer>
+</body>
+</html>
