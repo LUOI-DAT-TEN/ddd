@@ -1,372 +1,479 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ngày Quốc Tế Phụ Nữ 8/3</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pháo Hoa</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #000; overflow: hidden; width: 100vw; height: 100vh; }
+    canvas { display: block; width: 100vw; height: 100vh; }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            background: linear-gradient(135deg, #ffeef8 0%, #fff5f7 100%);
-        }
+    /* ── Overlay ── */
+    #overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(3px);
+      z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.6s ease;
+    }
+    #overlay.show { opacity: 1; pointer-events: all; }
 
-        /* Header */
-        header {
-            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
-            color: white;
-            text-align: center;
-            padding: 3rem 1rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
+    /* ── Popup box ── */
+    #popup {
+      position: relative;
+      background: linear-gradient(145deg, #0d001f, #1a0030, #0d001f);
+      border: 1px solid rgba(255,215,0,0.35);
+      border-radius: 24px;
+      padding: 50px 44px 40px;
+      max-width: 420px; width: 90%;
+      text-align: center;
+      box-shadow:
+        0 0 40px rgba(255,100,0,0.25),
+        0 0 80px rgba(150,0,255,0.15),
+        inset 0 0 30px rgba(255,215,0,0.04);
+      transform: scale(0.75) translateY(40px);
+      transition: transform 0.6s cubic-bezier(0.34,1.56,0.64,1), opacity 0.5s ease;
+      opacity: 0;
+    }
+    #overlay.show #popup { transform: scale(1) translateY(0); opacity: 1; }
 
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
+    /* Corner ornaments */
+    #popup::before, #popup::after {
+      content: '✦';
+      position: absolute;
+      font-size: 18px;
+      color: rgba(255,215,0,0.5);
+    }
+    #popup::before { top: 14px; left: 18px; }
+    #popup::after  { top: 14px; right: 18px; }
 
-        header p {
-            font-size: 1.2rem;
-            opacity: 0.95;
-        }
+    .popup-emoji {
+      font-size: 62px;
+      display: block;
+      margin-bottom: 12px;
+      animation: popBounce 1.8s ease-in-out infinite;
+      filter: drop-shadow(0 0 16px rgba(255,200,0,0.7));
+    }
+    @keyframes popBounce {
+      0%,100% { transform: translateY(0) rotate(-4deg); }
+      50%      { transform: translateY(-10px) rotate(4deg); }
+    }
 
-        /* Navigation */
-        nav {
-            background: #fff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+    .popup-title {
+      font-family: Georgia, serif;
+      font-size: 28px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #ffd700, #ff6b35, #ff1493, #ffd700);
+      background-size: 250% 250%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradShift 3s ease infinite;
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+    @keyframes gradShift {
+      0%,100% { background-position: 0% 50%; }
+      50%      { background-position: 100% 50%; }
+    }
 
-        nav ul {
-            list-style: none;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
+    .popup-sub {
+      font-family: Georgia, serif;
+      font-size: 13px;
+      color: rgba(255,200,150,0.8);
+      letter-spacing: 3px;
+      margin-bottom: 20px;
+    }
 
-        nav li {
-            position: relative;
-        }
+    .popup-divider {
+      width: 60%; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,215,0,0.5), transparent);
+      margin: 0 auto 20px;
+    }
 
-        nav a {
-            display: block;
-            padding: 1rem 1.5rem;
-            color: #c44569;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
+    .popup-msg {
+      font-family: Georgia, serif;
+      font-size: 15px;
+      color: rgba(255,220,180,0.9);
+      line-height: 1.9;
+      letter-spacing: 1px;
+    }
+    .popup-msg span {
+      color: #ffd700;
+      text-shadow: 0 0 8px #ffd700;
+    }
 
-        nav a:hover {
-            background: #ffe0ec;
-            color: #ff6b9d;
-        }
+    .popup-close {
+      margin-top: 28px;
+      display: inline-block;
+      padding: 10px 36px;
+      border: 1px solid rgba(255,215,0,0.5);
+      border-radius: 50px;
+      background: rgba(255,150,0,0.12);
+      color: #ffd700;
+      font-family: Georgia, serif;
+      font-size: 14px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: background 0.25s, box-shadow 0.25s, transform 0.15s;
+    }
+    .popup-close:hover {
+      background: rgba(255,150,0,0.28);
+      box-shadow: 0 0 18px rgba(255,200,0,0.35);
+      transform: scale(1.05);
+    }
+    .popup-close:active { transform: scale(0.97); }
 
-        /* Main Content */
-        main {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
+    /* X button */
+    .popup-x {
+      position: absolute; top: 14px; right: 50px;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.5);
+      font-size: 14px; line-height: 28px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .popup-x:hover { background: rgba(255,80,80,0.3); color: #fff; }
 
-        .content-section {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-        }
-
-        .content-section h2 {
-            color: #c44569;
-            margin-bottom: 1rem;
-            font-size: 2rem;
-            border-left: 5px solid #ff6b9d;
-            padding-left: 1rem;
-        }
-
-        .tooltip-container {
-            display: inline-block;
-            position: relative;
-            color: #ff6b9d;
-            font-weight: bold;
-            cursor: help;
-            border-bottom: 2px dotted #ff6b9d;
-        }
-
-        .tooltip {
-            visibility: hidden;
-            opacity: 0;
-            background: #333;
-            color: #fff;
-            text-align: center;
-            border-radius: 8px;
-            padding: 10px 15px;
-            position: absolute;
-            z-index: 1000;
-            bottom: 125%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 250px;
-            font-size: 0.9rem;
-            font-weight: normal;
-            transition: opacity 0.3s, visibility 0.3s;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-        }
-
-        .tooltip::after {
-            content: "";
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -5px;
-            border-width: 5px;
-            border-style: solid;
-            border-color: #333 transparent transparent transparent;
-        }
-
-        .tooltip-container:hover .tooltip {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .card {
-            background: linear-gradient(135deg, #fff 0%, #ffe0ec 100%);
-            border-radius: 12px;
-            padding: 1.5rem;
-            text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 2px solid #ffe0ec;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(255, 107, 157, 0.3);
-        }
-
-        .card h3 {
-            color: #c44569;
-            margin-bottom: 0.5rem;
-            font-size: 1.3rem;
-        }
-
-        .icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        /* Footer */
-        footer {
-            background: linear-gradient(135deg, #c44569 0%, #ff6b9d 100%);
-            color: white;
-            text-align: center;
-            padding: 2rem 1rem;
-            margin-top: 3rem;
-        }
-
-        footer p {
-            margin: 0.5rem 0;
-        }
-
-        .footer-links {
-            margin-top: 1rem;
-        }
-
-        .footer-links a {
-            color: white;
-            text-decoration: none;
-            margin: 0 1rem;
-            opacity: 0.9;
-            transition: opacity 0.3s;
-        }
-
-        .footer-links a:hover {
-            opacity: 1;
-            text-decoration: underline;
-        }
-
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 2rem;
-            }
-
-            nav ul {
-                flex-direction: column;
-            }
-
-            nav a {
-                border-bottom: 1px solid #ffe0ec;
-            }
-
-            .card-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    /* Confetti dots inside popup */
+    .pop-star {
+      position: absolute;
+      font-size: 14px;
+      pointer-events: none;
+      animation: floatStar var(--d,3s) ease-in-out infinite alternate;
+      opacity: 0.6;
+    }
+    @keyframes floatStar {
+      from { transform: translateY(0) rotate(0deg); }
+      to   { transform: translateY(-12px) rotate(20deg); }
+    }
+  </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <h1>🌸 Ngày Quốc Tế Phụ Nữ 8/3 🌸</h1>
-        <p>Tôn vinh vẻ đẹp, sức mạnh và những đóng góp của phụ nữ</p>
-    </header>
+<canvas id="c"></canvas>
 
-    <!-- Navigation -->
-    <nav>
-        <ul>
-            <li><a href="#history">Lịch Sử</a></li>
-            <li><a href="#meaning">Ý Nghĩa</a></li>
-            <li><a href="#celebration">Kỷ Niệm</a></li>
-            <li><a href="#quotes">Danh Ngôn</a></li>
-        </ul>
-    </nav>
+<!-- Popup -->
+<div id="overlay">
+  <div id="popup">
+    <div class="popup-x" id="popupX">✕</div>
+    <div class="pop-star" style="top:20px;left:60px;--d:2.5s">🌟</div>
+    <div class="pop-star" style="bottom:60px;left:24px;--d:3.2s">✨</div>
+    <div class="pop-star" style="bottom:70px;right:24px;--d:2.8s">🌟</div>
+    <div class="pop-star" style="top:22px;right:72px;--d:3.5s">✨</div>
 
-    <!-- Main Content -->
-    <main>
-        <section id="history" class="content-section">
-            <h2>📜 Lịch Sử Ngày 8/3</h2>
-            <p>
-                <span class="tooltip-container">Ngày Quốc tế Phụ nữ
-                    <span class="tooltip">International Women's Day - Được công nhận bởi Liên Hợp Quốc từ năm 1975</span>
-                </span>
-                được kỷ niệm lần đầu tiên vào năm 
-                <span class="tooltip-container">1911
-                    <span class="tooltip">Ngày 19/3/1911 tại Áo, Đức, Thụy Sĩ và Đan Mạch với hơn 1 triệu người tham gia</span>
-                </span>
-                . Ngày này bắt nguồn từ các phong trào 
-                <span class="tooltip-container">lao động phụ nữ
-                    <span class="tooltip">Phụ nữ đấu tranh cho quyền bình đẳng, quyền bầu cử và điều kiện làm việc tốt hơn</span>
-                </span>
-                vào đầu thế kỷ 20.
-            </p>
-            <p style="margin-top: 1rem;">
-                Tại Việt Nam, ngày 8/3 đã trở thành một ngày lễ đặc biệt để tôn vinh 
-                <span class="tooltip-container">phụ nữ Việt Nam
-                    <span class="tooltip">Phụ nữ Việt Nam nổi tiếng với tinh thần mạnh mẽ, truyền thống "Anh hùng, bất khuất, trung hậu, đảm đang"</span>
-                </span>
-                trong gia đình và xã hội.
-            </p>
-        </section>
+    <span class="popup-emoji">🎆</span>
+    <div class="popup-title">CHÚC MỪNG<br>NĂM MỚI!</div>
+    <div class="popup-sub">✦ Năm 2026 ✦</div>
+    <div class="popup-divider"></div>
+    <div class="popup-msg">
+      <span>LÌ XÌ TUI ĐI BẠN</span><br>
+      TUI BẮT ĐẦU NHẬN TỪ HÔM NAY<br>
+      CHÚC BẠN NĂM MỚI THÀNH CÔNG RỰC RỠ! 🎉
+    </div>
+    <button class="popup-close" id="popupClose">OK</button>
+  </div>
+</div>
+<script>
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
 
-        <section id="meaning" class="content-section">
-            <h2>💝 Ý Nghĩa Của Ngày 8/3</h2>
-            <div class="card-grid">
-                <div class="card">
-                    <div class="icon">⚖️</div>
-                    <h3>
-                        <span class="tooltip-container">Bình Đẳng Giới
-                            <span class="tooltip">Đấu tranh để phụ nữ có quyền ngang bằng với nam giới trong mọi lĩnh vực</span>
-                        </span>
-                    </h3>
-                    <p>Thúc đẩy quyền bình đẳng giữa nam và nữ trong xã hội</p>
-                </div>
-                <div class="card">
-                    <div class="icon">🏆</div>
-                    <h3>
-                        <span class="tooltip-container">Tôn Vinh Thành Tựu
-                            <span class="tooltip">Ghi nhận những đóng góp to lớn của phụ nữ trong lịch sử và hiện tại</span>
-                        </span>
-                    </h3>
-                    <p>Ghi nhận những đóng góp xuất sắc của phụ nữ</p>
-                </div>
-                <div class="card">
-                    <div class="icon">💪</div>
-                    <h3>
-                        <span class="tooltip-container">Trao Quyền Phụ Nữ
-                            <span class="tooltip">Hỗ trợ phụ nữ phát triển kỹ năng, sự nghiệp và vị thế trong xã hội</span>
-                        </span>
-                    </h3>
-                    <p>Khuyến khích phụ nữ phát triển bản thân và sự nghiệp</p>
-                </div>
-            </div>
-        </section>
+function resize() {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
 
-        <section id="celebration" class="content-section">
-            <h2>🎉 Cách Kỷ Niệm Ngày 8/3</h2>
-            <ul style="list-style: none; padding: 0;">
-                <li style="padding: 0.8rem; margin: 0.5rem 0; background: #fff5f7; border-radius: 8px;">
-                    🌹 Tặng 
-                    <span class="tooltip-container">hoa và quà
-                        <span class="tooltip">Hoa hồng, tulip, lan là những loại hoa phổ biến tặng vào ngày 8/3</span>
-                    </span>
-                    cho những người phụ nữ quan trọng
-                </li>
-                <li style="padding: 0.8rem; margin: 0.5rem 0; background: #fff5f7; border-radius: 8px;">
-                    ❤️ Bày tỏ 
-                    <span class="tooltip-container">lòng biết ơn
-                        <span class="tooltip">Nói lời cảm ơn chân thành đến mẹ, vợ, chị em, đồng nghiệp nữ</span>
-                    </span>
-                    và sự trân trọng
-                </li>
-                <li style="padding: 0.8rem; margin: 0.5rem 0; background: #fff5f7; border-radius: 8px;">
-                    🎊 Tổ chức các 
-                    <span class="tooltip-container">sự kiện văn hóa
-                        <span class="tooltip">Hội thảo, triển lãm, buổi giao lưu về quyền phụ nữ và bình đẳng giới</span>
-                    </span>
-                    và hoạt động cộng đồng
-                </li>
-                <li style="padding: 0.8rem; margin: 0.5rem 0; background: #fff5f7; border-radius: 8px;">
-                    📱 Chia sẻ 
-                    <span class="tooltip-container">thông điệp ý nghĩa
-                        <span class="tooltip">Sử dụng hashtag #IWD #InternationalWomensDay #NgayQuocTePhunu để lan tỏa</span>
-                    </span>
-                    trên mạng xã hội
-                </li>
-            </ul>
-        </section>
+const COLORS = [
+  '#ff4444','#ff7722','#ffcc00','#aaff44',
+  '#44ffdd','#44aaff','#aa44ff','#ff44cc',
+  '#ffffff','#ffd700','#ff6699','#00ffaa',
+];
 
-        <section id="quotes" class="content-section">
-            <h2>✨ Danh Ngôn Về Phụ Nữ</h2>
-            <blockquote style="border-left: 4px solid #ff6b9d; padding-left: 1rem; margin: 1rem 0; font-style: italic; color: #555;">
-                "Không có gì cao quý hơn một người phụ nữ mạnh mẽ." - 
-                <span class="tooltip-container">Sophocles
-                    <span class="tooltip">Nhà viết kịch Hy Lạp cổ đại nổi tiếng (496-406 TCN)</span>
-                </span>
-            </blockquote>
-            <blockquote style="border-left: 4px solid #ff6b9d; padding-left: 1rem; margin: 1rem 0; font-style: italic; color: #555;">
-                "Phụ nữ là nền tảng thực sự của xã hội." - 
-                <span class="tooltip-container">Jean-Jacques Rousseau
-                    <span class="tooltip">Triết gia và nhà văn người Pháp thời kỳ Khai sáng (1712-1778)</span>
-                </span>
-            </blockquote>
-            <blockquote style="border-left: 4px solid #ff6b9d; padding-left: 1rem; margin: 1rem 0; font-style: italic; color: #555;">
-                "Giáo dục một người đàn ông, bạn giáo dục một cá nhân. Giáo dục một người phụ nữ, bạn giáo dục cả một thế hệ." - 
-                <span class="tooltip-container">Brigham Young
-                    <span class="tooltip">Lãnh đạo tôn giáo người Mỹ (1801-1877), nhấn mạnh vai trò của phụ nữ trong gia đình</span>
-                </span>
-            </blockquote>
-        </section>
-    </main>
+/* ── Hạt lửa ── */
+class Spark {
+  constructor(x, y, color) {
+    this.x = x; this.y = y;
+    this.color = color;
+    this.r = Math.random() * 2.8 + 0.8;
+    const angle = Math.random() * Math.PI * 2;
+    const spd   = Math.random() * 7 + 1.5;
+    this.vx = Math.cos(angle) * spd;
+    this.vy = Math.sin(angle) * spd;
+    this.alpha = 1;
+    this.decay = Math.random() * 0.014 + 0.010;
+    this.gravity = 0.13;
+    this.trail = [];
+  }
+  update() {
+    this.trail.push({ x: this.x, y: this.y });
+    if (this.trail.length > 7) this.trail.shift();
+    this.vx *= 0.979;
+    this.x  += this.vx;
+    this.y  += this.vy;
+    this.vy += this.gravity;
+    this.alpha -= this.decay;
+  }
+  draw() {
+    for (let i = 0; i < this.trail.length; i++) {
+      const t  = this.trail[i];
+      const ta = (i / this.trail.length) * this.alpha * 0.35;
+      ctx.save();
+      ctx.globalAlpha = ta;
+      ctx.fillStyle   = this.color;
+      ctx.shadowColor = this.color;
+      ctx.shadowBlur  = 5;
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, this.r * 0.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    ctx.fillStyle   = this.color;
+    ctx.shadowColor = this.color;
+    ctx.shadowBlur  = 12;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2026 - Trang Web Ngày Quốc Tế Phụ Nữ 8/3</p>
-        <p>Tôn vinh và tri ân những người phụ nữ tuyệt vời</p>
-        <div class="footer-links">
-            <a href="#history">Lịch Sử</a>
-            <a href="#meaning">Ý Nghĩa</a>
-            <a href="#celebration">Kỷ Niệm</a>
-            <a href="#quotes">Danh Ngôn</a>
-        </div>
-        <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.9;">
-            🌸 Chúc mừng ngày 8/3 - Hãy luôn tự hào là phụ nữ! 🌸
-        </p>
-    </footer>
+/* ── Hạt glitter hình sao ── */
+class StarParticle {
+  constructor(x, y, color) {
+    this.x = x; this.y = y;
+    this.color = color;
+    this.size = Math.random() * 5 + 2;
+    const angle = Math.random() * Math.PI * 2;
+    const spd   = Math.random() * 3.5 + 0.5;
+    this.vx = Math.cos(angle) * spd;
+    this.vy = Math.sin(angle) * spd;
+    this.alpha = 1;
+    this.decay = Math.random() * 0.018 + 0.007;
+    this.gravity = 0.07;
+    this.rot = Math.random() * Math.PI * 2;
+    this.rotSpd = (Math.random() - 0.5) * 0.18;
+  }
+  update() {
+    this.x   += this.vx;
+    this.y   += this.vy;
+    this.vy  += this.gravity;
+    this.rot += this.rotSpd;
+    this.alpha -= this.decay;
+  }
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.rot);
+    ctx.fillStyle   = this.color;
+    ctx.shadowColor = this.color;
+    ctx.shadowBlur  = 10;
+    ctx.beginPath();
+    for (let i = 0; i < 10; i++) {
+      const a = (i * Math.PI) / 5 - Math.PI / 2;
+      const r = i % 2 === 0 ? this.size : this.size * 0.42;
+      i === 0
+        ? ctx.moveTo(Math.cos(a) * r, Math.sin(a) * r)
+        : ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+/* ── Vụ nổ ── */
+function explode(x, y) {
+  const c1 = COLORS[Math.floor(Math.random() * COLORS.length)];
+  const c2 = COLORS[Math.floor(Math.random() * COLORS.length)];
+  const shape = Math.random();
+
+  if (shape < 0.33) {
+    // Nổ tròn đều
+    const n = 80 + Math.floor(Math.random() * 60);
+    for (let i = 0; i < n; i++) sparks.push(new Spark(x, y, i % 3 === 0 ? c2 : c1));
+
+  } else if (shape < 0.66) {
+    // Nổ vòng tròn
+    const n = 70;
+    for (let i = 0; i < n; i++) {
+      const angle = (i / n) * Math.PI * 2;
+      const spd   = 4 + Math.random() * 3;
+      const sp    = new Spark(x, y, i % 2 === 0 ? c1 : c2);
+      sp.vx = Math.cos(angle) * spd;
+      sp.vy = Math.sin(angle) * spd;
+      sparks.push(sp);
+    }
+
+  } else {
+    // Nổ hình tia
+    const arms = 6 + Math.floor(Math.random() * 4);
+    const perArm = 10;
+    for (let a = 0; a < arms; a++) {
+      const baseAngle = (a / arms) * Math.PI * 2;
+      for (let j = 0; j < perArm; j++) {
+        const angle = baseAngle + (Math.random() - 0.5) * 0.22;
+        const spd   = 2 + (j / perArm) * 6.5 + Math.random() * 1.5;
+        const sp    = new Spark(x, y, a % 2 === 0 ? c1 : c2);
+        sp.vx = Math.cos(angle) * spd;
+        sp.vy = Math.sin(angle) * spd;
+        sparks.push(sp);
+      }
+    }
+  }
+
+  // Glitter sao vàng
+  const ns = 22 + Math.floor(Math.random() * 18);
+  for (let i = 0; i < ns; i++)
+    sparks.push(new StarParticle(x, y, i % 2 === 0 ? '#ffd700' : c1));
+
+  // Sóng xung kích
+  waves.push({ x, y, r: 0, alpha: 0.7, color: c1 });
+}
+
+/* ── Tên lửa ── */
+class Rocket {
+  constructor(tx, ty) {
+    this.x    = tx + (Math.random() - 0.5) * 60;
+    this.y    = canvas.height + 10;
+    this.tx   = tx; this.ty = ty;
+    const spd = 13 + Math.random() * 7;
+    const ang = Math.atan2(ty - this.y, tx - this.x);
+    this.vx   = Math.cos(ang) * spd;
+    this.vy   = Math.sin(ang) * spd;
+    this.trail = [];
+    this.done  = false;
+  }
+  update() {
+    this.trail.push({ x: this.x, y: this.y });
+    if (this.trail.length > 12) this.trail.shift();
+    this.x += this.vx;
+    this.y += this.vy;
+    if (this.y <= this.ty + 15) {
+      explode(this.x, this.y);
+      this.done = true;
+    }
+  }
+  draw() {
+    for (let i = 0; i < this.trail.length; i++) {
+      const t = this.trail[i];
+      const a = (i / this.trail.length) * 0.8;
+      ctx.save();
+      ctx.globalAlpha = a;
+      ctx.fillStyle   = '#ffdd88';
+      ctx.shadowColor = '#ff8800';
+      ctx.shadowBlur  = 10;
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, 2.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+}
+
+const sparks  = [];
+const rockets = [];
+const waves   = [];
+
+/* ── Render loop ── */
+function loop() {
+  ctx.fillStyle = 'rgba(0,0,0,0.17)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  for (let i = waves.length - 1; i >= 0; i--) {
+    const w = waves[i];
+    w.r    += 5;
+    w.alpha -= 0.03;
+    if (w.alpha <= 0) { waves.splice(i, 1); continue; }
+    ctx.save();
+    ctx.globalAlpha = w.alpha;
+    ctx.strokeStyle = w.color;
+    ctx.lineWidth   = 1.5;
+    ctx.shadowColor = w.color;
+    ctx.shadowBlur  = 14;
+    ctx.beginPath();
+    ctx.arc(w.x, w.y, w.r, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  for (let i = rockets.length - 1; i >= 0; i--) {
+    rockets[i].update();
+    rockets[i].draw();
+    if (rockets[i].done) rockets.splice(i, 1);
+  }
+
+  for (let i = sparks.length - 1; i >= 0; i--) {
+    sparks[i].update();
+    sparks[i].draw();
+    if (sparks[i].alpha <= 0) sparks.splice(i, 1);
+  }
+
+  requestAnimationFrame(loop);
+}
+loop();
+
+/* ── Bắn tự động ── */
+function autoFire() {
+  const x = canvas.width  * 0.1 + Math.random() * canvas.width  * 0.8;
+  const y = canvas.height * 0.05 + Math.random() * canvas.height * 0.45;
+  rockets.push(new Rocket(x, y));
+  setTimeout(autoFire, Math.random() * 900 + 400);
+}
+
+for (let i = 0; i < 7; i++) {
+  setTimeout(() => {
+    const x = canvas.width  * 0.1 + Math.random() * canvas.width  * 0.8;
+    const y = canvas.height * 0.05 + Math.random() * canvas.height * 0.45;
+    rockets.push(new Rocket(x, y));
+  }, i * 280);
+}
+setTimeout(autoFire, 2200);
+
+/* ── Click canvas để bắn ── */
+canvas.addEventListener('click', e => {
+  if (document.getElementById('overlay').classList.contains('show')) return;
+  for (let i = 0; i < 4; i++) {
+    setTimeout(() => {
+      rockets.push(new Rocket(
+        e.clientX + (Math.random() - 0.5) * 120,
+        e.clientY + (Math.random() - 0.5) * 80
+      ));
+    }, i * 130);
+  }
+});
+
+/* ── Popup sau 10s ── */
+const overlay    = document.getElementById('overlay');
+const popupClose = document.getElementById('popupClose');
+const popupX     = document.getElementById('popupX');
+
+function showPopup() {
+  overlay.classList.add('show');
+  for (let i = 0; i < 8; i++) {
+    setTimeout(() => {
+      const x = canvas.width  * 0.1 + Math.random() * canvas.width  * 0.8;
+      const y = canvas.height * 0.05 + Math.random() * canvas.height * 0.5;
+      rockets.push(new Rocket(x, y));
+    }, i * 180);
+  }
+}
+
+function closePopup() { overlay.classList.remove('show'); }
+
+setTimeout(showPopup, 5000);
+popupClose.addEventListener('click', closePopup);
+popupX.addEventListener('click', closePopup);
+overlay.addEventListener('click', e => { if (e.target === overlay) closePopup(); });
+</script>
 </body>
 </html>
